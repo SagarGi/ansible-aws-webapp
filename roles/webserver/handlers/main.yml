@@ -1,0 +1,6 @@
+---
+- name: Restart node app
+  systemd:
+    name: nodeapp
+    state: restarted
+    daemon_reload: yes

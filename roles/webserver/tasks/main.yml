@@ -1,0 +1,40 @@
+---
+- name: Install Node Js and Npm
+  apt:
+    name: [nodejs, npm]
+    state: present
+
+- name: Create the app directory
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+
+- name: Copy the Node application files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ app_dir }}/{{ item }}"
+    owner: ubuntu
+    group: ubuntu
+  loop:
+    - app.js
+    - package.json
+  notify: Restart node app
+
+- name: Install app dependencies
+  npm:
+    path: "{{ app_dir }}"
+
+- name: Install the systemd service for the app
+  template:
+    src: nodeapp.service.j2
+    dest: /etc/systemd/system/nodeapp.service
+  notify: Restart node app
+
+- name: Enable and start the Node app
+  systemd:
+    name: nodeapp
+    enabled: yes
+    state: started
+    daemon_reload: yes

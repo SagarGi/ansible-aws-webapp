@@ -10,3 +10,9 @@
   become: true
   roles:
     - database
+
+- name: Configure the webapp servers
+  hosts: webservers
+  become: true
+  roles:
+    - webserver

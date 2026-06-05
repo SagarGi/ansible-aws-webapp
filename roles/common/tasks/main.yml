@@ -1,0 +1,10 @@
+---
+- name: Update the apt package cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install common base packages
+  apt:
+    name: "{{ common_packages }}"
+    state: present

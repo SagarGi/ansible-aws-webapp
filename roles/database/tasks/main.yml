@@ -1,0 +1,36 @@
+---
+- name: Install MySql servers
+  apt:
+    name:
+      - mysql-server
+      - python3-pymysql
+    state: present
+
+- name: Check Mysql Status
+  service:
+    name: mysql
+    state: started
+    enabled: yes
+
+- name: Allow MySQL to accept connections from the app servers
+  copy:
+    dest: /etc/mysql/mysql.conf.d/zz-remote.cnf
+    content: |
+      [mysqld]
+      bind-address = 0.0.0.0
+  notify: Restart MySQL
+
+- name: Create the application database
+  community.mysql.mysql_db:
+    name: "{{ db_name }}"
+    state: present
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+- name: Create the application user
+  community.mysql.mysql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    priv: "{{ db_name }}.*:ALL"
+    host: "%"
+    state: present
+    login_unix_socket: /run/mysqld/mysqld.sock

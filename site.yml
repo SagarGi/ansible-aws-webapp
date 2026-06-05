@@ -1,0 +1,12 @@
+---
+- name: Base configuration for all servers
+  hosts: all
+  become: true
+  roles:
+    - common
+
+- name: Configure the database server
+  hosts: database
+  become: true
+  roles:
+    - database

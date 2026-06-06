@@ -38,3 +38,12 @@
     enabled: yes
     state: started
     daemon_reload: yes
+
+- name: Deploy the app environment file with DB connection
+  template:
+    src: nodeapp.env.j2
+    dest: /etc/nodeapp.env
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Restart node app

@@ -2,3 +2,4 @@
 db_name: appdb
 db_user: appuser
 db_password: "{{ vault_db_password }}"
+app_port: 3000

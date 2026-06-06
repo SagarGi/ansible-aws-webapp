@@ -34,3 +34,14 @@
     host: "%"
     state: present
     login_unix_socket: /run/mysqld/mysqld.sock
+
+- name: Create the visits table
+  community.mysql.mysql_query:
+    login_db: "{{ db_name }}"
+    login_unix_socket: /run/mysqld/mysqld.sock
+    query: >
+      CREATE TABLE IF NOT EXISTS visits (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        server VARCHAR(255),
+        visited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )

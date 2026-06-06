@@ -1,30 +1,31 @@
 ---
 - name: Install Nginx
-  apt:
+  ansible.builtin.apt:
     name: nginx
     state: present
 
 - name: Configure Nginx as a load balancer
-  template:
+  ansible.builtin.template:
     src: loadbalancer.conf.j2
     dest: /etc/nginx/sites-available/loadbalancer.conf
+    mode: "0644"
   notify: Reload Nginx
 
 - name: Enable our load balancer site and create a symlink
-  file:
+  ansible.builtin.file:
     src: /etc/nginx/sites-available/loadbalancer.conf
     dest: /etc/nginx/sites-enabled/loadbalancer.conf
     state: link
   notify: Reload Nginx
 
 - name: Remove the default Nginx site
-  file:
+  ansible.builtin.file:
     path: /etc/nginx/sites-enabled/default
     state: absent
   notify: Reload Nginx
 
 - name: Ensure Nginx is running and enabled
-  service:
+  ansible.builtin.service:
     name: nginx
     state: started
-    enabled: yes
+    enabled: true

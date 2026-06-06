@@ -5,9 +5,9 @@ After=network.target
 [Service]
 Type=simple
 User=ubuntu
-WorkingDirectory={{ app_dir }}
+WorkingDirectory={{ webserver_app_dir }}
 EnvironmentFile=/etc/nodeapp.env
-ExecStart=/usr/bin/node {{ app_dir }}/app.js
+ExecStart=/usr/bin/node {{ webserver_app_dir }}/app.js
 Restart=always
 
 [Install]

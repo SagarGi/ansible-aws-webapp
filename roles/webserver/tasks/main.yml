@@ -1,20 +1,22 @@
 ---
 - name: Install Node Js and Npm
-  apt:
+  ansible.builtin.apt:
     name: [nodejs, npm]
     state: present
 
 - name: Create the app directory
-  file:
-    path: "{{ app_dir }}"
+  ansible.builtin.file:
+    path: "{{ webserver_app_dir }}"
     state: directory
+    mode: "0755"
     owner: ubuntu
     group: ubuntu
 
 - name: Copy the Node application files
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}"
-    dest: "{{ app_dir }}/{{ item }}"
+    dest: "{{ webserver_app_dir }}/{{ item }}"
+    mode: "0644"
     owner: ubuntu
     group: ubuntu
   loop:
@@ -23,24 +25,25 @@
   notify: Restart node app
 
 - name: Install app dependencies
-  npm:
-    path: "{{ app_dir }}"
+  community.general.npm:
+    path: "{{ webserver_app_dir }}"
 
 - name: Install the systemd service for the app
-  template:
+  ansible.builtin.template:
     src: nodeapp.service.j2
     dest: /etc/systemd/system/nodeapp.service
+    mode: "0644"
   notify: Restart node app
 
 - name: Enable and start the Node app
-  systemd:
+  ansible.builtin.systemd:
     name: nodeapp
-    enabled: yes
+    enabled: true
     state: started
-    daemon_reload: yes
+    daemon_reload: true
 
 - name: Deploy the app environment file with DB connection
-  template:
+  ansible.builtin.template:
     src: nodeapp.env.j2
     dest: /etc/nodeapp.env
     owner: root

@@ -1,33 +1,34 @@
 ---
 - name: Install MySql servers
-  apt:
+  ansible.builtin.apt:
     name:
       - mysql-server
       - python3-pymysql
     state: present
 
 - name: Check Mysql Status
-  service:
+  ansible.builtin.service:
     name: mysql
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Allow MySQL to accept connections from the app servers
-  copy:
+  ansible.builtin.copy:
     dest: /etc/mysql/mysql.conf.d/zz-remote.cnf
     content: |
       [mysqld]
       bind-address = 0.0.0.0
+    mode: "0644"
   notify: Restart MySQL
 
 - name: Create the application database
-  community.mysql.mysql_db:
+  ansible.mysql.mysql_db:
     name: "{{ db_name }}"
     state: present
     login_unix_socket: /run/mysqld/mysqld.sock
 
 - name: Create the application user
-  community.mysql.mysql_user:
+  ansible.mysql.mysql_user:
     name: "{{ db_user }}"
     password: "{{ db_password }}"
     priv: "{{ db_name }}.*:ALL"
@@ -36,7 +37,7 @@
     login_unix_socket: /run/mysqld/mysqld.sock
 
 - name: Create the visits table
-  community.mysql.mysql_query:
+  ansible.mysql.mysql_query:
     login_db: "{{ db_name }}"
     login_unix_socket: /run/mysqld/mysqld.sock
     query: >

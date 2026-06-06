@@ -1,0 +1,15 @@
+upstream app_servers {
+{% for host in groups['webservers'] %}
+    server {{ hostvars[host].ansible_default_ipv4.address }}:3000;
+{% endfor %}
+}
+
+server {
+    listen 80;
+
+    location / {
+        proxy_pass http://app_servers;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}

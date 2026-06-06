@@ -16,3 +16,9 @@
   become: true
   roles:
     - webserver
+
+- name: Configure the load balancer
+  hosts: loadbalancer
+  become: true
+  roles:
+    - loadbalancer
